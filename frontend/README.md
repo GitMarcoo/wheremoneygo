@@ -1,5 +1,10 @@
 # wheremoneygo
 
+# Links I use
+https://heroicons.com/
+https://headlessui.com/vue/listbox#basic-example
+https://flowbite.com/docs/customize/dark-mode/
+
 ## Project setup
 ```
 npm install
