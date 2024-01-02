@@ -14,13 +14,13 @@
             </button>
             <div class="hidden w-full md:block md:w-auto" id="navbar-default">
             <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                <li>
-                    <router-link  to="/" class="navItem " active-class="" aria-current="page">Home</router-link>
+                <li class="self-center">
+                    <router-link  to="/" class="navItem" aria-current="page">Home</router-link>
                 </li>
-                <li>
+                <li class="self-center">
                     <router-link  to="/about" class="navItem">About</router-link>
                 </li>
-                <li>
+                <li class="self-center">
                     <router-link  to="/manage" class="navItem ">Manage</router-link>
                 </li>
                 <li>
@@ -33,7 +33,6 @@
                         </svg>
                     </button>
                 </li>
-
             </ul>
             </div>
         </div>
