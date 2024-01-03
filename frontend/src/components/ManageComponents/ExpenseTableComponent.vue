@@ -10,17 +10,13 @@
                         <th scope="col" class="px-6 py-3 text-sm">
                             Amount <span :class="{'text-green-600': totalAmount > 0, 'text-red-600': totalAmount < 0}"> € {{ totalAmount  }} </span>
                         </th>
+                        <th scope="col" class="px-6 py-3 text-sm">
+                            Interval
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(value, key) in expenses" :key="key" class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ value.name }}
-                        </th>
-                        <td class="px-6 py-4 font-bold" :class="{'text-green-600': value.amount > 0, 'text-red-600': value.amount < 0}">
-                            € {{ value.amount }}
-                        </td>
-                    </tr>
+                    <ExpenseTableRowComponent v-for="(value, key) in expenses" :key="key" :expense="value"/>
                 </tbody>
             </table>
         </div>
@@ -34,6 +30,7 @@
 <script setup lang="ts">
 import { defineProps, computed, ref } from 'vue';
 import Expense from '@/models/Expense';
+import ExpenseTableRowComponent from './ExpenseTableRowComponent.vue';
 
 const props = defineProps({
     title: {
@@ -52,8 +49,8 @@ const addExpense = () => {
     expenses.value.push(new Expense('test', 10, 'MONTHLY'));
 }
 
-const totalAmount = computed(() => {
-    return props.data.reduce((acc, curr) => acc + curr.amount, 0);
+const totalAmount = computed((): number => {
+    return props.data.reduce((acc: number, curr: any) => acc + Number(curr.amount), 0);
 });
 
 </script>

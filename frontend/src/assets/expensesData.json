@@ -20,7 +20,7 @@
         {
             "name": "Rent",
             "amount": -500,
-            "interval": "MONTHLY"
+            "interval": "DAILY"
         },
         {
             "name": "Groceries",

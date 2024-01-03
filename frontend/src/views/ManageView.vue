@@ -4,25 +4,25 @@
             <div class="flex justify-items-start">
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white">Monthly Incomes</h3>
             </div>
-            <TableComponent v-if="incomesHasValues" :title="'Incomes'" :data="incomes"/>
+            <ExpenseTableComponent v-if="incomesHasValues" :title="'Incomes'" :data="incomes"/>
         </div>
         <div class="mt-10">
             <div class="flex justify-items-start">
                 <h3 class="text-xl font-bold text-gray-800 dark:text-white">Monthly Expenses</h3>
             </div>
-            <TableComponent v-if="expensesHasValues" :title="'Incomes'" :data="expenses"/>
+            <ExpenseTableComponent v-if="expensesHasValues" :title="'Incomes'" :data="expenses"/>
         </div>
 
     </div>
 </template>
 <script setup lang="ts">
-import TableComponent from '@/components/ManageComponents/TableComponent.vue';
 import { defineComponent, onBeforeMount, ref, computed } from 'vue';
 import Expense from '@/models/Expense';
+import ExpenseTableComponent from '@/components/ManageComponents/ExpenseTableComponent.vue';
 
 defineComponent({
     components: {
-        TableComponent
+        ExpenseTableComponent
     }
 });
 

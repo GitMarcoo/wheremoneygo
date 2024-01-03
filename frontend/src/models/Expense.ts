@@ -1,4 +1,5 @@
 import  Interval from './Interval';
+import { getIntervalName } from './Interval';
 import mock from "@/assets/expensesData.json";
 
 export default class Expense {
@@ -38,6 +39,10 @@ export default class Expense {
 
     getAmount(): number {
         return this.amount;
+    }
+
+    getIntervalName(): string {
+        return getIntervalName(this.interval);
     }
 
     getMontlyAmount(): number {
