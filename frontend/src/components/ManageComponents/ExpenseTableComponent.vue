@@ -13,10 +13,14 @@
                         <th scope="col" class="px-6 py-3 text-sm">
                             Interval
                         </th>
+                        <th scope="col  ">
+
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <ExpenseTableRowComponent v-for="(value, key) in expenses" :key="key" :expense="value"/>
+                    <ExpenseTableRowComponent v-for="(value, key) in expenses" :key="key"
+                    @expenseDeleted="deleteExpense" :expense="value"/>
                 </tbody>
             </table>
         </div>
@@ -46,7 +50,12 @@ const props = defineProps({
 const expenses = ref(props.data as Expense[]);
 
 const addExpense = () => {
-    expenses.value.push(new Expense('test', 10, 'MONTHLY'));
+    expenses.value.push(new Expense('new', 0, 'MONTHLY'));
+}
+
+const deleteExpense = (expenseToDelete: Expense): void => {
+    const expenseToDeleteIndex = expenses.value.indexOf(expenseToDelete)
+    expenses.value.splice(expenseToDeleteIndex, 1)
 }
 
 const totalAmount = computed((): number => {

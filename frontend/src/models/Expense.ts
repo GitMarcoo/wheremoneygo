@@ -65,4 +65,10 @@ export default class Expense {
     static getMockExpenses(): Expense[] {
         return mock.expenses.map((expense) => new Expense(expense.name, expense.amount, expense.interval));   
     }
+
+    equals(other: Expense): boolean {
+        return this.name === other.name &&
+        this.amount === other.amount &&
+        this.interval === other.interval
+    }
 }

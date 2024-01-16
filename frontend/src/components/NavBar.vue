@@ -40,17 +40,11 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
-const isDarkMode = ref(false);
+import { ref, onBeforeMount } from 'vue';
+import { DarkModeManager } from '@/utils/DarkModeManager';
 
-const toggleDarkMode = ():void => {
-    if (document.documentElement.classList.contains('dark') === false) {
-        document.documentElement.classList.add('dark');
-        isDarkMode.value = true;
-    } else {
-        document.documentElement.classList.remove('dark')
-        isDarkMode.value = false;
-    }
-}
+const darkModeManager = new DarkModeManager()
+
+const toggleDarkMode = ():void => darkModeManager.toggleDarkMode()
 
 </script>
