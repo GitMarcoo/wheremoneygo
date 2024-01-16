@@ -1,0 +1,42 @@
+{
+    "incomes": [
+        {
+            "name": "Salary",
+            "amount": 750,
+            "interval": "MONTHLY"
+        },
+        {
+            "name": "Bonus",
+            "amount": 250,
+            "interval": "YEARLY"
+        },
+        {
+            "name": "Interest",
+            "amount": 50,
+            "interval": "MONTHLY"
+        }
+    ],
+    "expenses": [
+        {
+            "name": "Rent",
+            "amount": -500,
+            "interval": "DAILY"
+        },
+        {
+            "name": "Groceries",
+            "amount": -200,
+            "interval": "MONTHLY"
+        },
+        {
+            "name": "Car",
+            "amount": -100,
+            "interval": "MONTHLY"
+        },
+        {
+            "name": "Phone",
+            "amount": -50,
+            "interval": "MONTHLY"
+        }
+    ]
+
+}
