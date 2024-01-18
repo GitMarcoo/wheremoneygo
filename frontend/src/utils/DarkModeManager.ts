@@ -1,8 +1,10 @@
+import { ref } from "vue"
+
 export class DarkModeManager {
-    #inDarkMode: boolean
+    inDarkMode = ref<boolean>(false)
 
     constructor(){
-        this.#inDarkMode = this.#getDarkmodeFromLocaleStorage()
+        this.inDarkMode.value = this.#getDarkmodeFromLocaleStorage()
     }
 
     #getDarkmodeFromLocaleStorage(): boolean {
@@ -17,7 +19,7 @@ export class DarkModeManager {
     }
 
     toggleDarkMode():void {
-        if(this.#inDarkMode){
+        if(this.inDarkMode.value){
             this.#unSetDarkMode()
             return
         } 
@@ -27,12 +29,15 @@ export class DarkModeManager {
     #setToDarkMode(): void {
         window.localStorage.setItem('darkmode', '1')
         document.documentElement.classList.add('dark');
-        this.#inDarkMode = true;
+        this.inDarkMode.value = true;
     }
 
     #unSetDarkMode(): void {
         window.localStorage.setItem('darkmode', '0')
         document.documentElement.classList.remove('dark')
-        this.#inDarkMode = false;
+        this.inDarkMode.value = false;
     }
+
+
+    
 }
