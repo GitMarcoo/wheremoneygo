@@ -1,10 +1,10 @@
 <template>
     <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-        <th scope="row" class="px-6 py-4">
+        <th scope="row" class="px-6 ">
             <input type="text" class="border-0 bg-transparent font-medium text-gray-900 dark:text-white whitespace-nowrap" 
             :value="props.expense.getName()" :disabled="inPreviewMode">
         </th>
-        <td class="px-6 py-4 font-bold flex flex-row" :class="{'text-green-600':  props.expense.getAmount() > 0, 'text-red-600':  props.expense.getAmount() < 0}">
+        <td class="px-6 font-bold flex flex-row m-auto" :class="{'text-green-600':  props.expense.getAmount() > 0, 'text-red-600':  props.expense.getAmount() < 0}">
             <div class="text-center m-auto">
                 €
             </div>
@@ -12,7 +12,7 @@
             ref="expenseAmount"
             :value="expense.getAmount()" :disabled="inPreviewMode">
         </td>
-        <td class="px-6 py-4 font-bold">
+        <td class="px-6 font-bold">
             <div v-if="inPreviewMode">
                 {{ props.expense.getIntervalName() }}
             </div>
@@ -21,22 +21,25 @@
                 <option>United States</option>
             </select>
         </td>
-        <td class="flex flex-row h-full">
-            <div>
-                <button v-if="inPreviewMode" @click="editRow" class="bg-gray-800 border-gray-800 text-white p-1 rounded">Edit</button>
+        <td class="flex flex-row flex h-16">
+            <div class="h-full m-auto flex">
+                <EditButton popovertarget="edit-expense-popover" @click="editRow" v-if="inPreviewMode"/>
                 <button v-else @click="saveRow"> Save </button>
             </div>
-            <div class="m-auto align-middle">
+            <div class="h-full m-auto flex">
                 <DeleteButton @click="deleteRow" v-if="inPreviewMode"/>
                 <button v-else @click="exitEditRow">Cancel</button>
             </div>
         </td>
      </tr>
+     <ExpenseEditPopOver :showPopOver="!inPreviewMode" :expense="props.expense"/>
 </template>
 <script setup lang="ts">
 import { defineProps, ref, defineEmits } from 'vue';
 import Expense from '@/models/Expense';
 import DeleteButton from '@/components/Buttons/DeleteButton.vue';
+import EditButton from '../Buttons/EditButton.vue';
+import ExpenseEditPopOver from './ExpenseEditPopOver.vue';
 
 const props = defineProps({
     expense: {
@@ -76,3 +79,4 @@ const deleteRow = (): void => {
 
 
 </script>
+

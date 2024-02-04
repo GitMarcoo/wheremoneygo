@@ -13,3 +13,17 @@
 .width-800 {
     max-width: 800px;
 }
+
+.width-500 {
+    max-width: 500px;
+}
+
+.inputUnderline {
+    @apply border-b-2 border-gray-300 focus:outline-none;
+    border: none;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.ExpensePopOverLabel {
+    @apply text-gray-800 font-extrabold text-xl;
+}
