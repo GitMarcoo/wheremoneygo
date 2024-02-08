@@ -3,15 +3,21 @@ import { getIntervalName } from './Interval';
 import mock from "@/assets/expensesData.json";
 
 export default class Expense {
+    id: number;
     name: string;
     amount: number;
-    interval: Interval;
+    timeInterval: Interval;
 
 
-    constructor(name: string, amount: number, interval: Interval | string) {
+    constructor(id: number, name: string, amount: number, interval: Interval | string) {
+       this.id = id;
        this.name = name;
        this.amount = amount;
-       this.interval = this.setExpenseInterval(interval);
+       this.timeInterval = this.setExpenseInterval(interval);
+    }
+
+    static copyConstructor(input: any): Expense {
+        return new Expense(input.id, input.name, input.amount, input.timeInterval);
     }
 
     setExpenseInterval(interval: Interval | string): Interval {
@@ -30,7 +36,7 @@ export default class Expense {
     }
 
     getMonthlyInterval(): Interval{
-        return this.interval;
+        return this.timeInterval;
     }
 
     getName(): string {
@@ -42,11 +48,11 @@ export default class Expense {
     }
 
     getIntervalName(): string {
-        return getIntervalName(this.interval);
+        return getIntervalName(this.timeInterval);
     }
 
     getMontlyAmount(): number {
-        switch(this.interval) {
+        switch(this.timeInterval) {
             case Interval.DAILY:
                 return this.amount * 30;
             case Interval.WEEKLY:
@@ -58,17 +64,10 @@ export default class Expense {
         }
     }
 
-    static getMockIncomes(): Expense[] {
-        return  mock.incomes.map((income) => new Expense(income.name, income.amount, income.interval));   
-    }
-
-    static getMockExpenses(): Expense[] {
-        return mock.expenses.map((expense) => new Expense(expense.name, expense.amount, expense.interval));   
-    }
-
-    equals(other: Expense): boolean {
+    equals(other: Expense | undefined | null): boolean {
+        if(other === null || other === undefined) return false;
         return this.name === other.name &&
         this.amount === other.amount &&
-        this.interval === other.interval
+        this.timeInterval === other.timeInterval
     }
 }

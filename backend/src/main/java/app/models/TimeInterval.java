@@ -1,5 +1,5 @@
 package app.models;
 
-public enum Interval {
+public enum TimeInterval {
     DAILY, WEEKLY, MONTHLY, YEARLY
 }
