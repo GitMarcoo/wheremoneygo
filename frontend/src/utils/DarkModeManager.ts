@@ -11,7 +11,7 @@ export class DarkModeManager {
         const darkModeBrowserStorage = window.localStorage.getItem('darkmode')
         
         if(darkModeBrowserStorage === '1') {
-            this.#setToDarkMode()
+            this.setToDarkMode()
             return true
         }
 
@@ -20,19 +20,19 @@ export class DarkModeManager {
 
     toggleDarkMode():void {
         if(this.inDarkMode.value){
-            this.#unSetDarkMode()
+            this.unSetDarkMode()
             return
         } 
-        this.#setToDarkMode()
+        this.setToDarkMode()
     }
 
-    #setToDarkMode(): void {
+    private setToDarkMode(): void {
         window.localStorage.setItem('darkmode', '1')
         document.documentElement.classList.add('dark');
         this.inDarkMode.value = true;
     }
 
-    #unSetDarkMode(): void {
+    private unSetDarkMode(): void {
         window.localStorage.setItem('darkmode', '0')
         document.documentElement.classList.remove('dark')
         this.inDarkMode.value = false;
