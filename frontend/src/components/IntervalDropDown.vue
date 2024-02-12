@@ -2,7 +2,7 @@
   <div class="font-bold flex flex-row m-2">
     <label
       for="expenseInterval"
-      class="ExpensePopOverLabel"
+      class="ExpensePopOverLabel mr-2"
     >Interval:</label>
     <select
       id="expenseInterval"

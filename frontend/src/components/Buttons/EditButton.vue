@@ -11,8 +11,8 @@
       fill="none"
       viewBox="0 0 24 24"
       stroke-width="1.5"
-      stroke="white"
-      class="w-8 h-8"
+      stroke="currentColor"
+      class="w-8 h-8 text-gray-700 dark:text-white"
     >
       <path
         stroke-linecap="round"
@@ -25,9 +25,9 @@
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       stroke-width="2.2"
-      stroke="white"
+      stroke="currentColor"
       viewBox="0 0 24 24"
-      class="w-8 h-8"
+      class="w-8 h-8 text-gray-700 dark:text-white"
     >
       <path
         stroke-linecap="round"

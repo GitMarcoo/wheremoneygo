@@ -1,38 +1,54 @@
 <template>
   <div class="block width-800 ml-10 sm:ml-auto mr-10 sm:mr-auto justify-center">
+    <section class="mt-3 flex flex-row justify-center">
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-white flex w m-auto ml-2 mr-2">
+        Show in interval: 
+      </h1>
+      <IntervalDropDown :interval="Interval.MONTHLY" @intervalChanged="setTableInterval"/>
+    </section>
     <div class="mt-5">
       <div class="flex justify-items-start">
         <h3 class="text-xl font-bold text-gray-800 dark:text-white">
-          Monthly Incomes
+          {{ currentInterval }} Incomes
         </h3>
       </div>
+      <ErrorComponent class="min-heigth-100" v-if="incomesError" :message="incomesError" />
+      <LoadingComponent class="min-heigth-100" v-if="incomesIsPending" />
       <ExpenseTableComponent
-        v-if="incomesHasValues"
+        v-else-if="incomesHasValues"
         :title="'Incomes'"
         :data="incomes"
         @update="refetch"
+        :interval="currentInterval"
       />
     </div>
     <div class="mt-10">
       <div class="flex justify-items-start">
         <h3 class="text-xl font-bold text-gray-800 dark:text-white">
-          Monthly Expenses
+          {{ currentInterval }} Expenses
         </h3>
       </div>
+      <ErrorComponent class="min-heigth-100" v-if="expenseError" :message="expenseError" />
+      <LoadingComponent class="min-heigth-100" v-else-if="expenseIsPending" />
       <ExpenseTableComponent
-        v-if="expensesHasValues"
+        v-else-if="expensesHasValues"
         :title="'Incomes'"
         :data="expenses"
         @update="refetch"
+        :interval="currentInterval"
       />
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { defineComponent, onBeforeMount, ref, computed, inject } from 'vue';
+import { defineComponent, onBeforeMount, ref, computed, inject, watchEffect } from 'vue';
 import Expense from '@/models/Expense';
 import ExpenseTableComponent from '@/components/ManageComponents/ExpenseTableComponent.vue';
 import RESTAdopterWithFetch from '@/services/RESTAdaptorWithFetch';
+import IntervalDropDown from '@/components/IntervalDropDown.vue';
+import Interval from '@/models/Interval';
+import LoadingComponent from '@/components/LoadingComponent.vue';
+import ErrorComponent from '@/components/ErrorComponent.vue';
 
 defineComponent({
     components: {
@@ -45,14 +61,27 @@ if (!expenseService) {
     throw new Error('No expense service provided');
 }
 
-const incomes = ref([] as Expense[]);
-const expenses = ref([] as Expense[]);
+const incomes = ref<Expense[]>([]);
+const expenses = ref<Expense[]>([]);
 const incomeResponse  = expenseService.custom('positive', 'GET', null, null);
 const loadIncomes = ref(incomeResponse.load)
 const expenseResponse = expenseService.custom('negative', 'GET', null, null);
 const loadExpenses = ref(expenseResponse.load)
+const currentInterval = ref<Interval>(Interval.MONTHLY);
+const incomesIsPending = ref<boolean>(false)
+const expenseIsPending = ref<boolean>(false)
+const incomesError = ref<string>('')
+const expenseError = ref<string>('')
 
 onBeforeMount(() => {
+    watchEffect(() => {
+      incomesIsPending.value = incomeResponse.isPending.value
+      incomesError.value = incomeResponse.error.value
+      expenseIsPending.value = expenseResponse.isPending.value
+      expenseError.value = expenseResponse.error.value
+    })
+
+
     incomeResponse.load().then((data: any) => {
         incomes.value = incomeResponse.entity.value
     });
@@ -70,6 +99,10 @@ const refetch = () => {
     loadExpenses.value().then((data: any) => {
         expenses.value = expenseResponse.entity.value
     });
+}
+
+const setTableInterval = (interval: Interval) => {
+    currentInterval.value = interval;
 }
 
 const incomesHasValues = computed(() => incomes.value.length > 0);

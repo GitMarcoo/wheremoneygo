@@ -1,17 +1,17 @@
 <template>
   <div
     v-if="props.showPopOver"
-    class="z-10 absolute top-0 left-8 flex m-auto justify-center bg-gray-600 rounded p-3 w-full width-500 h-96"
+    class="z-10 absolute top-0 left-8 flex m-auto justify-center bg-gray-100 dark:bg-gray-600 rounded p-3 w-full width-500 h-96 backdrop-blur"
   >
     <form @submit.prevent>
-      <h1 class="w-full m-auto justify-center flex text-3xl dark:text-white font-bold mb-4">
+      <h1 class="w-full m-auto justify-center flex text-3xl text-gray-800 dark:text-white font-bold mb-4">
         Edit Expense
       </h1>
       <section class="" v-if="expenseCopy">
         <div class="m-2">
           <label
             for="expenseName"
-            class="text-gray-800 font-extrabold text-xl"
+            class="text-gray-800 font-extrabold text-xl mr-2"
           >Name:</label>
           <input
             id="expenseName"
@@ -26,7 +26,7 @@
         >
           <label
             for="expenseAmount"
-            class="text-gray-800 font-extrabold text-xl"
+            class="text-gray-800 font-extrabold text-xl mr-2"
           >Amount:</label>
           <span class="text-base ml-3 place-self-center text-inherit">
             €
@@ -44,9 +44,10 @@
           @intervalChanged="expenseCopy.timeInterval = $event"
         />
       </section>
-      <section class="absolute bottom-0 left-0 p-3 w-full justify-end m-auto flex">
-        <SaveButton :disabled=" !hasChanged || saveisPending" :isPending="saveisPending" @click="saveClicked" />
-        <DeleteButton @click="saveClicked" />
+      <section class="absolute bottom-0 left-0 p-3 w-full justify-end m-auto flex gap-2">
+        <SaveButton :disabled=" !hasChanged || saveIsPending" :isPending="saveIsPending" @click="saveClicked" />
+        <DeleteButtonText :disabled="saveIsPending || deleteIsPending" :isPending="deleteIsPending" @click="deleteExpense" />
+        <CustomTextButton :disabled="saveIsPending || deleteIsPending" buttonText="Close" @click="emits('close')" />
       </section>
     </form>
   </div>
@@ -55,10 +56,11 @@
 <script setup lang="ts">
 import { defineProps, ref, defineEmits, inject, computed, watchEffect } from 'vue';
 import Expense from '@/models/Expense';
-import DeleteButton from '../Buttons/DeleteButton.vue';
+import DeleteButtonText from '../Buttons/DeleteButtonText.vue';
 import SaveButton from '../Buttons/SaveButton.vue';
 import ExpenseIntervalDropDown from '../IntervalDropDown.vue';
 import RESTAdaptorWithFetch from '@/services/RESTAdaptorWithFetch';
+import CustomTextButton from '../Buttons/CustomTextButton.vue';
 
 const props = defineProps({
     expense: {
@@ -78,8 +80,15 @@ try {
 } catch (error) {
     console.error(error);
 }
+
+if(!expenseCopy.value) {
+    expenseCopy.value = new Expense(0, '', 0, '');
+}
+
 const expenseService: RESTAdaptorWithFetch<Expense> | undefined = inject('expenseService');
-const saveisPending = ref(false);
+
+const saveIsPending = ref(false);
+const deleteIsPending = ref(false);
 
 if (!expenseService) {
   throw new Error('Expense service not found.');
@@ -98,10 +107,23 @@ const saveExpense = async (): Promise<void> => {
     const response = expenseService.save(expenseCopy.value);
 
     watchEffect(() => {
-        saveisPending.value = response.isPending.value;
+        saveIsPending.value = response.isPending.value;
     });
 
     await response.load();
+}
+
+const deleteExpense = async (): Promise<void> => {
+
+    const response = expenseService.deleteById(expenseCopy.value.id)
+
+    watchEffect(() => {
+        deleteIsPending.value = response.isPending.value;
+    });
+
+    await response.load();
+    emits('close');
+    emits('update');
 }
 
 const hasChanged = computed(() => {

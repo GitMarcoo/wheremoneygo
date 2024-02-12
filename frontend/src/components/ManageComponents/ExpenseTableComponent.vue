@@ -16,12 +16,12 @@
             >
               Amount <span :class="{'text-green-600': totalAmount > 0, 'text-red-600': totalAmount < 0}"> € {{ totalAmount }} </span>
             </th>
-            <th
+            <!-- <th
               scope="col"
               class="px-6 py-3 text-sm"
             >
               Interval
-            </th>
+            </th> -->
             <th scope="col"></th>
           </tr>
         </thead>
@@ -32,6 +32,7 @@
             :expense="value"
             @expenseDeleted="deleteExpense"
             @update="updateExpense"
+            :interval="props.interval"
           />
         </tbody>
       </table>
@@ -50,6 +51,7 @@
 import { defineProps, defineEmits, computed, ref, watch } from 'vue';
 import Expense from '@/models/Expense';
 import ExpenseTableRowComponent from './ExpenseTableRowComponent.vue';
+import Interval from '@/models/Interval';
 
 const props = defineProps({
     title: {
@@ -58,6 +60,10 @@ const props = defineProps({
     },
     data: {
         type: Array as () => Expense[],
+        required: true
+    },
+    interval: {
+        type: Object as () => Interval,
         required: true
     }
 });

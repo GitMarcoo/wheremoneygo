@@ -102,6 +102,14 @@
                 </svg>
               </button>
             </li>
+            <li class="self-center">
+              <router-link
+                to="/login"
+                class="navItem"
+              >
+                Login
+              </router-link>
+            </li>
           </ul>
         </div>
       </div>

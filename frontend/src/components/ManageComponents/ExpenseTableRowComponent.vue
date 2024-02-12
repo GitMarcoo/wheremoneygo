@@ -12,48 +12,17 @@
       >
     </th>
     <td
-      class="px-6 font-bold flex flex-row m-auto"
+      class="px-6 font-bold m-auto"
       :class="{'text-green-600': props.expense.getAmount() > 0, 'text-red-600': props.expense.getAmount() < 0}"
-    >
-      <div class="text-center m-auto">
-        €
-      </div>
-      <input
-        type="text" 
-        class="border-0 bg-transparent text-inherit whitespace-nowrap  p-0 pl-2 w-20"
-        :value="expense.getAmount()"
-        :disabled="inPreviewMode"
-      >
+    >  {{ '€ ' + expense.getAmountByInterval(props.interval).toFixed(2) }}
     </td>
-    <td class="px-6 font-bold">
+    <!-- <td class="px-6 font-bold">
         {{ props.expense.getIntervalName() }}
-    </td>
+    </td> -->
     <td class="flex flex-row flex h-16">
-      <div class="h-full m-auto flex">
-        <EditButton
-          v-if="inPreviewMode"
-          popovertarget="edit-expense-popover"
-          @click="editRow"
-        />
-        <button
-          v-else
-          @click="saveRow"
-        >
-          Save
-        </button>
-      </div>
-      <div class="h-full m-auto flex">
-        <DeleteButton
-          v-if="inPreviewMode"
-          @click="deleteRow"
-        />
-        <button
-          v-else
-          @click="exitEditRow"
-        >
-          Cancel
-        </button>
-      </div>
+      <EditButton
+        @click="editRow"
+      />
     </td>
   </tr>
   <ExpenseEditPopOver
@@ -66,9 +35,9 @@
 <script setup lang="ts">
 import { defineProps, ref, defineEmits, watch } from 'vue';
 import Expense from '@/models/Expense';
-import DeleteButton from '@/components/Buttons/DeleteButton.vue';
 import EditButton from '../Buttons/EditButton.vue';
 import ExpenseEditPopOver from './ExpenseEditPopOver.vue';
+import Interval from '@/models/Interval';
 
 const props = defineProps({
     expense: {
@@ -79,6 +48,10 @@ const props = defineProps({
         type: Boolean,
         required: false,
         default: true
+    },
+    interval: {
+        type: Object as () => Interval,
+        required: false
     }
 });
 
@@ -99,14 +72,6 @@ const editRow = (): void => {
 
 const exitEditRow = (): void => {
     inPreviewMode.value = true
-}
-
-const saveRow = (): void => {
-    inPreviewMode. value = true
-}
-
-const deleteRow = (): void => {
-    emtis('expenseDeleted', expense.value)
 }
 
 const passUpdate = (): void => {

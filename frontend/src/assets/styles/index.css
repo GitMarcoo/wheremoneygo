@@ -18,6 +18,10 @@
     max-width: 500px;
 }
 
+.min-heigth-100 {
+    min-height: 100px;
+}
+
 .inputUnderline {
     @apply border-b-2 border-gray-300 focus:outline-none;
     border: none;
