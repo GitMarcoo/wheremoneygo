@@ -81,6 +81,10 @@ try {
     console.error(error);
 }
 
+watchEffect(() => {
+  expenseCopy.value = Expense.copyConstructor(props.expense)
+})
+
 if(!expenseCopy.value) {
     expenseCopy.value = new Expense(0, '', 0, '');
 }

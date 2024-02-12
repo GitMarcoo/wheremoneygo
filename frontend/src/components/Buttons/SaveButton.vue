@@ -1,7 +1,7 @@
 <template>
   <button
     :class="[
-      'h-full flex flex-row bg-green-400 p-2 pe-3 pl-3 text-white font-bold rounded disabled:bg-gray-300 disabled:cursor-not-allowed',
+      'h-full flex flex-row bg-green-400 p-2 pe-3 pl-3 text-white font-bold rounded disabled:cursor-not-allowed',
       { 'hover:bg-green-800': !props.disabled, 'bg-green-600': props.disabled }
     ]"
     @click="saveClicked"
