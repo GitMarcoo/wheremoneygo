@@ -1,121 +1,111 @@
-import User from "@/models/User"
+import User from "@/models/User";
+import { Ref, ref } from "vue";
+import JwtDecoder from "@/utils/JwtDecoder";
 
+/** Class representing a session service.
+ * It manages the session of the user. 
+ * It saves the token in the browser storage.
+ * It retrieves the token from the browser storage.
+ * @param {string} resourcesUrl 
+ * @param {string} browserStorageItemName
+ * @param {User} user is a ref for the user
+ * @returns {SessionSbService} the instance of the class
+ */
 export default class SessionSbService {
-  RESOURCES_URL: string // the back-end base url for authentication resources
-  _currentToken: string | null // the current authentication token of this session
-  // to be injected in the authorization header of every outgoing request
-  _currentAccount: User | null // the account instant of the currently logged on user
+    BROWSER_STORAGE_ITEM_NAME;
+    RESOURCES_URL;
+    user: Ref<User | null>;
 
-  constructor (RESOURCES_URL: string) {
-    this.RESOURCES_URL = RESOURCES_URL
-    this._currentToken = ''
-    this._currentAccount = null
-    this.getTokenFromBrowserStorage()
-  }
-
-  getTokenFromBrowserStorage () {
-    if (this._currentToken != null) return this._currentToken
-    this._currentToken = window.sessionStorage.getItem('TOKEN')
-    let userAccount = window.sessionStorage.getItem('ACCOUNT')
-
-    if (this._currentToken == null) {
-      try {
-        if (localStorage !== null) {
-          this._currentToken = window.localStorage.getItem('TOKEN')
-          userAccount = window.localStorage.getItem('ACCOUNT')
-          if (this._currentToken != null) { // Fix: Check if _currentToken is not null
-            window.sessionStorage.setItem('TOKEN', this._currentToken)
-          }
-          window.sessionStorage.setItem('ACCOUNT', userAccount || '') // Fix: Provide a default value of an empty string
-        }
-      } catch (e) {
-        console.error('SessionStorage is not available, using LocalStorage instead.')
-      }
+    constructor(resourcesUrl: string, browserStorageItemName: any) {
+      this.RESOURCES_URL = resourcesUrl;
+      this.BROWSER_STORAGE_ITEM_NAME = browserStorageItemName;
+      this.getTokenFromBrowserStorage();
+      this.user = ref<User | null>(null);
     }
-    if (userAccount != null) {
-      this._currentAccount = JSON.parse(userAccount)
-    }
-    return this._currentToken
-  }
 
-  saveTokenIntoBrowserStorage (token: string | null, user: User | null) {
-    this._currentToken = token
-    this._currentAccount = user
-    try {
-      if (token == null) {
-        this._currentAccount = null
-        window.sessionStorage.removeItem('TOKEN')
-        window.sessionStorage.removeItem('ACCOUNT')
 
-        if (localStorage !== sessionStorage) {
-          window.localStorage.removeItem('TOKEN')
-          window.localStorage.removeItem('ACCOUNT')
-        }
-      } else {
-        // insert into sessionStorage
-        window.sessionStorage.setItem('TOKEN', token)
-        window.sessionStorage.setItem('ACCOUNT', JSON.stringify(user))
-
-        // insert into localStorage
-        window.localStorage.setItem('TOKEN', token)
-        window.localStorage.setItem('ACCOUNT', JSON.stringify(user))
-      }
-    } catch (e) {
-      console.error('SessionStorage is not available, using LocalStorage instead.')
-    }
-  }
-
-  getUserName () {
-    return this._currentAccount ? this._currentAccount.username : ''
-  }
-
-  isAuthenticated () {
-    return this._currentAccount != null
-  }
-
-  async asyncLogin (userName: string, passWord: string) {
-    let url
-    let body
-    try {
-      url = this.RESOURCES_URL
-      body = JSON.stringify({
-        username: userName,
-        password: passWord
-      })
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: body
-      })
-      if (response.ok) {
-        const token = response.headers.get('Authorization')
-        const user = await response.json()
-        this.saveTokenIntoBrowserStorage(token, user)
-        return true
-      } else {
-        // throw new Error('Something went wrong: ' + await response.text())
-        console.error(response, !response.bodyUsed ? await response.text() : '')
-        if (response.status === 401) {
-          console.error('Unauthorized. Token may have expired or invalid.')
+    /**
+     *  It sends a request to the server to sign up the user.
+     * @param {String} email 
+     * @param {String} password 
+     * @returns {Promise<User>} the user signed up
+     */
+    async asyncSignUp(email: string, password: string) /*: Promise<User>*/ {
+        const response = await fetch(`${this.RESOURCES_URL}/signup`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email, password: password }),
+            // credentials: 'include',
+        })
+        if (response.ok) {
+            return true
         } else {
-          console.error('Error in response: ', response)
+            console.error(response);
+            const status = response.status;
+            return { status };
         }
-        return false
-      }
-    } catch (error) {
-      console.error()
     }
-  }
 
-  signOut () {
-    this.saveTokenIntoBrowserStorage(null, null)
-  }
+    async asyncSignIn(email: string, password: string) /*: Promise<User>*/ {
+        const response = await fetch(`${this.RESOURCES_URL}/signin`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email, password: password }),
+            // credentials: 'include',
+        })
+        if (response.ok) {
+            const user = await response.json();
+            const authHeader = response.headers.get('Authorization') as string;
+            const token = authHeader.split(' ')[1];
+            const decodedToken = JwtDecoder.decode(token);
+            const newUser = new User(decodedToken.id, decodedToken.firstName, null, null);
+            this.saveToken(response.headers.get('Authorization') as string,
+            newUser);
+            this.user.value = newUser;
+            return { user, response };
+        } else {
+            console.log(response);
+            const status = response.status;
+            return { user: null, status};
+        }
+    }
+    /**
+     * On signout it removes the token from the browser storage.
+     * It removes the user from the browser storage.
+     * It sets the user to null.
+     */
+    signOut() {
+        sessionStorage.removeItem(this.BROWSER_STORAGE_ITEM_NAME);
+        sessionStorage.removeItem('user');
+        this.user.value = null
+    }
 
-  get currentToken () {
-    return this._currentToken
-  }
+    /**
+     * It saves the token in the browser storage.
+     * @param {String} token jwt Token 
+     * @param {Object} user  
+     */
+    saveToken(token: string, user: object | null) {
+        sessionStorage.setItem(this.BROWSER_STORAGE_ITEM_NAME, token);
+        if(user !== null) sessionStorage.setItem('user', JSON.stringify(user));
+    }
+    /**
+     * It retrieves the token from the browser storage.
+     * @returns {String} the token
+     */
+    getTokenFromBrowserStorage() {
+      return sessionStorage.getItem(this.BROWSER_STORAGE_ITEM_NAME);
+    }
+    /**
+     * It retrieves the user from the browser storage.
+     * @returns {Object} the user
+     */
+    getUserFromBrowserStorage() {
+      return JSON.parse(sessionStorage.getItem('user') as string);
+    }
 
-  get currentAccount () {
-    return this._currentAccount
-  }
 }

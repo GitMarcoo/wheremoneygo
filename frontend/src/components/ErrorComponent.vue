@@ -1,7 +1,7 @@
 <template>
-    <div class="text-red-600 p-2">
-        {{ props.message  }}
-    </div>
+  <div class="text-red-600 p-2">
+    {{ props.message }}
+  </div>
 </template>
 
 <script setup lang="ts">

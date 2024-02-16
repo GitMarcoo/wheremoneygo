@@ -31,3 +31,7 @@
 .ExpensePopOverLabel {
     @apply text-gray-800 font-extrabold text-xl;
 }
+
+.vh-content {
+    height: calc(100vh - 72px);
+}

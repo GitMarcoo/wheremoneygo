@@ -21,14 +21,24 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "manage" */ '../views/ManageView.vue')
   },
   {
-    path: '/login',
-    name: 'login',
+    path: '/sign-in',
+    name: 'singin',
     component: () => import(/* webpackChunkName: "login" */ '../views/LoginView.vue')
   },
   {
     path: '/sign-up',
     name: 'signup',
     component: () => import(/* webpackChunkName: "signup" */ '../views/SignUpView.vue')
+  },
+  {
+    path: '/sign-out',
+    name: 'signout',
+    redirect: '/sign-in?signOut=true'
+  },
+  {
+    path: '/:pageMatch(.*)*',
+    name: 'UnknownRouteComponent',
+    component: () => import(/* webpackChunkName: "notfound" */ '../views/HomeView.vue')
   }
 ]
 

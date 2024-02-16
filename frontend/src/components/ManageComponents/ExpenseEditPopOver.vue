@@ -7,7 +7,10 @@
       <h1 class="w-full m-auto justify-center flex text-3xl text-gray-800 dark:text-white font-bold mb-4">
         Edit Expense
       </h1>
-      <section class="" v-if="expenseCopy">
+      <section
+        v-if="expenseCopy"
+        class=""
+      >
         <div class="m-2">
           <label
             for="expenseName"
@@ -45,9 +48,21 @@
         />
       </section>
       <section class="absolute bottom-0 left-0 p-3 w-full justify-end m-auto flex gap-2">
-        <SaveButton :disabled=" !hasChanged || saveIsPending" :isPending="saveIsPending" @click="saveClicked" />
-        <DeleteButtonText :disabled="saveIsPending || deleteIsPending" :isPending="deleteIsPending" @click="deleteExpense" />
-        <CustomTextButton :disabled="saveIsPending || deleteIsPending" buttonText="Close" @click="emits('close')" />
+        <SaveButton
+          :disabled=" !hasChanged || saveIsPending"
+          :is-pending="saveIsPending"
+          @click="saveClicked"
+        />
+        <DeleteButtonText
+          :disabled="saveIsPending || deleteIsPending"
+          :is-pending="deleteIsPending"
+          @click="deleteExpense"
+        />
+        <CustomTextButton
+          :disabled="saveIsPending || deleteIsPending"
+          button-text="Close"
+          @click="emits('close')"
+        />
       </section>
     </form>
   </div>

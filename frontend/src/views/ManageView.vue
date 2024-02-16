@@ -4,7 +4,10 @@
       <h1 class="text-3xl font-bold text-gray-800 dark:text-white flex w m-auto ml-2 mr-2">
         Show in interval: 
       </h1>
-      <IntervalDropDown :interval="Interval.MONTHLY" @intervalChanged="setTableInterval"/>
+      <IntervalDropDown
+        :interval="Interval.MONTHLY"
+        @intervalChanged="setTableInterval"
+      />
     </section>
     <div class="mt-5">
       <div class="flex justify-items-start">
@@ -12,14 +15,21 @@
           {{ currentInterval }} Incomes
         </h3>
       </div>
-      <ErrorComponent class="min-heigth-100" v-if="incomesError" :message="incomesError" />
-      <LoadingComponent class="min-heigth-100" v-if="incomesIsPending" />
+      <ErrorComponent
+        v-if="incomesError"
+        class="min-heigth-100"
+        :message="incomesError"
+      />
+      <LoadingComponent
+        v-if="incomesIsPending"
+        class="min-heigth-100"
+      />
       <ExpenseTableComponent
         v-else-if="incomesHasValues"
         :title="'Incomes'"
         :data="incomes"
-        @update="refetch"
         :interval="currentInterval"
+        @update="refetch"
       />
     </div>
     <div class="mt-10">
@@ -28,14 +38,21 @@
           {{ currentInterval }} Expenses
         </h3>
       </div>
-      <ErrorComponent class="min-heigth-100" v-if="expenseError" :message="expenseError" />
-      <LoadingComponent class="min-heigth-100" v-else-if="expenseIsPending" />
+      <ErrorComponent
+        v-if="expenseError"
+        class="min-heigth-100"
+        :message="expenseError"
+      />
+      <LoadingComponent
+        v-else-if="expenseIsPending"
+        class="min-heigth-100"
+      />
       <ExpenseTableComponent
         v-else-if="expensesHasValues"
         :title="'Incomes'"
         :data="expenses"
-        @update="refetch"
         :interval="currentInterval"
+        @update="refetch"
       />
     </div>
   </div>

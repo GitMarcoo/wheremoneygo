@@ -1,9 +1,9 @@
 <template>
   <div>
-    <nav class="bg-white border-gray-200 dark:bg-gray-900">
-      <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+    <nav class=" border-gray-200 dark:bg-gray-900">
+      <div class="w-full flex flex-wrap items-center px-4 justify-between p-4">
         <a
-          href="https://flowbite.com/"
+          href="/"
           class="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <!-- <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" /> -->
@@ -102,22 +102,60 @@
                 </svg>
               </button>
             </li>
-            <li class="self-center">
-              <router-link
-                to="/login"
-                class="navItem"
-              >
-                Login
-              </router-link>
+            <li class="self-center items-end">
+
+            </li>
+            <li class="self-center items-end">
+
             </li>
           </ul>
+        </div>
+        <div class="">
+          <div v-if="user === null" class="flex flex-row gap-3 justify-end items-center">
+            <router-link to="/sign-up" class="navItem">
+                <button class="rounded-xl bg-transparant border-2 border-white text-white hover:bg-white pt-2 pb-2 pl-3 pe-3 font-bold hover:text-gray-800">
+                  Sign up
+                </button>
+              </router-link>
+              <router-link to="/sign-in" class="navItem">
+                <button class="rounded-xl bg-blue-600 text-white  hover:bg-blue-800  pt-2 pb-2 pl-3 pe-3 font-bold ">
+                  Login
+                </button>
+              </router-link>
+            </div>
+            <div v-else  class="flex flex-row gap-5 justify-end items-center">
+              <p class="text-gray-800 dark:text-white  text">
+                Welcome, {{ user?.username }}
+              </p>
+              <router-link to="/sign-out" class="navItem">
+                <button class="rounded-xl bg-transparant border-2 border-white text-white hover:bg-white pt-2 pb-2 pl-3 pe-3 font-bold hover:text-gray-800">
+                  Log out
+                </button>
+              </router-link>
+            </div>
         </div>
       </div>
     </nav>
   </div>
 </template>
 <script setup lang="ts">
+import User from '@/models/User';
+import SessionSbService from '@/services/SessionSbService';
 import { DarkModeManager } from '@/utils/DarkModeManager';
+import { ref, inject, watchEffect, onBeforeMount } from 'vue';
+
+const sessionService: SessionSbService = inject('sessionService')!;
+const user = ref<User | null>(sessionService.user.value);
+
+onBeforeMount(() => {
+  if(sessionService.getUserFromBrowserStorage()) {
+    sessionService.user.value = sessionService.getUserFromBrowserStorage()
+  }
+}),
+
+watchEffect(() => {
+    user.value = sessionService.user.value
+})
 
 const darkModeManager = new DarkModeManager()
 

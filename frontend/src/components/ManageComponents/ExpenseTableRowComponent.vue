@@ -14,7 +14,8 @@
     <td
       class="px-6 font-bold m-auto"
       :class="{'text-green-600': props.expense.getAmount() > 0, 'text-red-600': props.expense.getAmount() < 0}"
-    >  {{ '€ ' + expense.getAmountByInterval(props.interval).toFixed(2) }}
+    >
+      {{ '€ ' + expense.getAmountByInterval(props.interval).toFixed(2) }}
     </td>
     <!-- <td class="px-6 font-bold">
         {{ props.expense.getIntervalName() }}

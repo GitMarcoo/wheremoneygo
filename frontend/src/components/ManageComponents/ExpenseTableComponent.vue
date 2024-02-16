@@ -22,7 +22,7 @@
             >
               Interval
             </th> -->
-            <th scope="col"></th>
+            <th scope="col" />
           </tr>
         </thead>
         <tbody>
@@ -30,9 +30,9 @@
             v-for="(value, key) in expenses"
             :key="key"
             :expense="value"
+            :interval="props.interval"
             @expenseDeleted="deleteExpense"
             @update="updateExpense"
-            :interval="props.interval"
           />
         </tbody>
       </table>
