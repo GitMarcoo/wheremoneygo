@@ -33,6 +33,6 @@ public class AuthenticationController {
     public ResponseEntity<?> signin(@RequestBody SignInRequest request) {
         return ResponseEntity.accepted().header(
                HttpHeaders.AUTHORIZATION, "Bearer " + authenticationService.signin(request).getToken())
-                .body(userService.findByEmail(request.getEmail()));
+                .body(authenticationService.signinResponse(request));
     }
 }

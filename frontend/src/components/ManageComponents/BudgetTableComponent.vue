@@ -26,13 +26,13 @@
           </tr>
         </thead>
         <tbody>
-          <ExpenseTableRowComponent
-            v-for="(value, key) in expenses"
+          <BudgetTableRowComponent
+            v-for="(value, key) in budgets"
             :key="key"
-            :expense="value"
-            :interval="props.interval"
-            @expenseDeleted="deleteExpense"
-            @update="updateExpense"
+            :budget="(value as Budget)"
+            :interval="(props.interval as String)"
+            @budgetDeleted="deleteBudget"
+            @update="updateBudget"
           />
         </tbody>
       </table>
@@ -40,7 +40,7 @@
     <div class="flex justify-end bg-transparent mt-2">
       <button
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        @click="addExpense"
+        @click="addBudget"
       >
         Add
       </button>
@@ -49,8 +49,8 @@
 </template>
 <script setup lang="ts">
 import { defineProps, defineEmits, computed, ref, watch } from 'vue';
-import Expense from '@/models/Expense';
-import ExpenseTableRowComponent from './ExpenseTableRowComponent.vue';
+import Budget from '@/models/Budget';
+import BudgetTableRowComponent from './BudgetTableRowComponent.vue';
 import Interval from '@/models/Interval';
 
 const props = defineProps({
@@ -59,37 +59,37 @@ const props = defineProps({
         required: true
     },
     data: {
-        type: Array as () => Expense[],
+        type: Array as () => Budget[],
         required: true
     },
     interval: {
-        type: Object as () => Interval,
+        type: String as () => Interval,
         required: true
     }
 });
 
 const emit = defineEmits(['update']);
 
-const expenses = ref(props.data as Expense[]);
+const budgets = ref(props.data as Budget[]);
 
 watch(() => props.data, () => {
-    expenses.value = props.data;
+    budgets.value = props.data;
 });
 
 watch(() => props.data, () => {
-    expenses.value = props.data;
+    budgets.value = props.data;
 });
 
-const addExpense = () => {
-    expenses.value.push(new Expense(0, 'new', 0, 'MONTHLY'));
+const addBudget = () => {
+    budgets.value.push(new Budget(0, 'new', 0, 'MONTHLY'));
 }
 
-const deleteExpense = (expenseToDelete: Expense): void => {
-    const expenseToDeleteIndex = expenses.value.indexOf(expenseToDelete)
-    expenses.value.splice(expenseToDeleteIndex, 1)
+const deleteBudget = (budgetToDelete: Budget): void => {
+    const budgetToDeleteIndex = budgets.value.indexOf(budgetToDelete)
+    budgets.value.splice(budgetToDeleteIndex, 1)
 }
 
-const updateExpense = (expenseToUpdate: Expense): void => {
+const updateBudget = (budgetToUpdate: Budget): void => {
     emit('update');
 }
 

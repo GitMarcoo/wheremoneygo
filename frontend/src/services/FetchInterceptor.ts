@@ -14,17 +14,16 @@ import { Router } from 'vue-router';
  */
 
 export class FetchInterceptor {
-    static theInstance = null;
+    static theInstance: FetchInterceptor | null = null;
     session;
     router;
     unregister;
+  
     constructor(session: SessionSbService, router: Router) {
       this.session = session;
       this.router = router;
 
-      if (FetchInterceptor.theInstance === null) {
-        FetchInterceptor.theInstance = null;
-      }
+      FetchInterceptor.theInstance = this;
       this.unregister = fetchIntercept.register(this)
     }
 

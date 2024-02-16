@@ -2,6 +2,7 @@ package app.services;
 
 import app.dto.JwtAuthenticationResponse;
 import app.dto.SignInRequest;
+import app.dto.SignInResponse;
 import app.dto.SignUpRequest;
 import app.exceptions.ResourceAlreadyUsedException;
 import app.exceptions.ResourceNotFoundException;
@@ -46,17 +47,23 @@ public class AuthenticationService {
 
 
     public JwtAuthenticationResponse signin(SignInRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid email or password."));
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), request.getPassword()));
         } catch (AuthenticationException e) {
             throw new ResourceNotFoundException("Invalid email or password.");
         }
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("Invalid email or password."));
         var jwt = jwtService.generateToken(user);
         return JwtAuthenticationResponse.builder().token(jwt).build();
+    }
+
+    public SignInResponse signinResponse(SignInRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid email or password."));
+        return SignInResponse.builder().firstName(user.getFirstName()).build();
     }
 
 }

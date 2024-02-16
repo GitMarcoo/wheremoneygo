@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String jwt;
-        final String userEmail;
+        final String userId;
 
         if(StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader,"Bearer ")) {
             filterChain.doFilter(request, response);
@@ -52,9 +52,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             jwt = authHeader.substring(7);
             log.debug("JWT: {}", jwt.toString());
-            userEmail = jwtService.extractUsername(jwt);
-            if (StringUtils.isNotEmpty(userEmail) && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userService.userDetailsService().loadUserByUsername(userEmail);
+            userId = jwtService.extractUsername(jwt);
+            if (StringUtils.isNotEmpty(userId) && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userService.userDetailsService().loadUserByUsername(userId);
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     log.debug("User - {}", userDetails);
                     SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -63,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     context.setAuthentication(authToken);
                     SecurityContextHolder.setContext(context);
-                    request.setAttribute("email", userEmail);
+                    request.setAttribute("id", userId);
                 }
             }
         } catch (Exception e) {

@@ -5,47 +5,51 @@
   >
     <form @submit.prevent>
       <h1 class="w-full m-auto justify-center flex text-3xl text-gray-800 dark:text-white font-bold mb-4">
-        Edit Expense
+        Edit budget
       </h1>
       <section
-        v-if="expenseCopy"
+        v-if="budgetCopy"
         class=""
       >
         <div class="m-2">
           <label
-            for="expenseName"
+            for="budgetName"
             class="text-gray-800 font-extrabold text-xl mr-2"
           >Name:</label>
           <input
-            id="expenseName"
-            v-model="expenseCopy.name"
+            id="budgetName"
+            v-model="budgetCopy.name"
             type="text" 
             class="border-0 inputUnderline font-medium bg-transparent rounded text-gray-900 dark:text-white whitespace-nowrap p-0 pl-1 ml-2"
           >
         </div>
         <div
           class="font-bold flex flex-row m-auto m-2"
-          :class="{'text-green-600': expenseCopy.getAmount() > 0, 'text-red-600': expenseCopy.getAmount() < 0}"
+          :class="{'text-green-600': budgetCopy.getAmount() > 0, 'text-red-600': budgetCopy.getAmount() < 0}"
         >
           <label
-            for="expenseAmount"
+            for="budgetAmount"
             class="text-gray-800 font-extrabold text-xl mr-2"
           >Amount:</label>
           <span class="text-base ml-3 place-self-center text-inherit">
             €
           </span>
           <input
-            id="expenseAmount"
-            ref="expenseAmount"
-            v-model="expenseCopy.amount" 
+            id="budgetAmount"
+            ref="budgetAmount"
+            v-model="budgetCopy.amount" 
             type="number"
             class="border-0 bg-transparent text-inherit whitespace-nowrap rounded p-0 pl-2 w-40"
           >
         </div>
-        <ExpenseIntervalDropDown
-          :interval="expenseCopy.timeInterval"
-          @intervalChanged="expenseCopy.timeInterval = $event"
+        <IntervalDropDown
+          :interval="budgetCopy.timeInterval"
+          @intervalChanged="budgetCopy.timeInterval = $event"
         />
+        <div class="flex items-center mb-4">
+            <input v-model="budgetCopy.recurring" :value="budgetCopy.recurring" id="default-checkbox" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            <label for="default-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Recurring</label>
+        </div>
       </section>
       <section class="absolute bottom-0 left-0 p-3 w-full justify-end m-auto flex gap-2">
         <SaveButton
@@ -56,7 +60,7 @@
         <DeleteButtonText
           :disabled="saveIsPending || deleteIsPending"
           :is-pending="deleteIsPending"
-          @click="deleteExpense"
+          @click="deleteBudget"
         />
         <CustomTextButton
           :disabled="saveIsPending || deleteIsPending"
@@ -70,16 +74,16 @@
 
 <script setup lang="ts">
 import { defineProps, ref, defineEmits, inject, computed, watchEffect } from 'vue';
-import Expense from '@/models/Expense';
+import Budget from '@/models/Budget';
 import DeleteButtonText from '../Buttons/DeleteButtonText.vue';
 import SaveButton from '../Buttons/SaveButton.vue';
-import ExpenseIntervalDropDown from '../IntervalDropDown.vue';
+import IntervalDropDown from '../IntervalDropDown.vue';
 import RESTAdaptorWithFetch from '@/services/RESTAdaptorWithFetch';
 import CustomTextButton from '../Buttons/CustomTextButton.vue';
 
 const props = defineProps({
-    expense: {
-        type: Expense,
+    budget: {
+        type: Budget,
         required: true
     },
     showPopOver: {
@@ -89,41 +93,41 @@ const props = defineProps({
     }
 });
 
-const expenseCopy = ref<Expense>();
+const budgetCopy = ref<Budget>();
 try {
-    expenseCopy.value = Expense.copyConstructor(props.expense);
+    budgetCopy.value = Budget.copyConstructor(props.budget);
 } catch (error) {
     console.error(error);
 }
 
 watchEffect(() => {
-  expenseCopy.value = Expense.copyConstructor(props.expense)
+  budgetCopy.value = Budget.copyConstructor(props.budget)
 })
 
-if(!expenseCopy.value) {
-    expenseCopy.value = new Expense(0, '', 0, '');
+if(!budgetCopy.value) {
+    budgetCopy.value = new Budget(0, '', 0, '');
 }
 
-const expenseService: RESTAdaptorWithFetch<Expense> | undefined = inject('expenseService');
+const budgetService: RESTAdaptorWithFetch<Budget> | undefined = inject('budgetService');
 
 const saveIsPending = ref(false);
 const deleteIsPending = ref(false);
 
-if (!expenseService) {
-  throw new Error('Expense service not found.');
+if (!budgetService) {
+  throw new Error('budget service not found.');
 }
 
 const emits = defineEmits(['update', 'close']);
 
 const saveClicked = async(): Promise<void> => {
-    await saveExpense();
+    await saveBudget();
     emits('close');
     emits('update');
 }
 
-const saveExpense = async (): Promise<void> => {
+const saveBudget = async (): Promise<void> => {
 
-    const response = expenseService.save(expenseCopy.value);
+    const response = budgetService.save(budgetCopy.value);
 
     watchEffect(() => {
         saveIsPending.value = response.isPending.value;
@@ -132,9 +136,9 @@ const saveExpense = async (): Promise<void> => {
     await response.load();
 }
 
-const deleteExpense = async (): Promise<void> => {
+const deleteBudget = async (): Promise<void> => {
 
-    const response = expenseService.deleteById(expenseCopy.value.id)
+    const response = budgetService.deleteById(budgetCopy.value.id)
 
     watchEffect(() => {
         deleteIsPending.value = response.isPending.value;
@@ -146,7 +150,7 @@ const deleteExpense = async (): Promise<void> => {
 }
 
 const hasChanged = computed(() => {
-    return !props.expense.equals(expenseCopy.value);
+    return !props.budget.equals(budgetCopy.value);
 });
 
-</script>
+</script>@/models/Budget

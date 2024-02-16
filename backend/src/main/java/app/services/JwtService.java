@@ -49,7 +49,6 @@ public class JwtService {
         String roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-
         extraClaims.put("roles", roles);
 
         return Jwts

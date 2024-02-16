@@ -55,7 +55,7 @@
                 About
               </router-link>
             </li>
-            <li class="self-center">
+            <li class="self-center" v-if="user?.roles">
               <router-link
                 to="/manage"
                 class="navItem "
@@ -125,7 +125,7 @@
             </div>
             <div v-else  class="flex flex-row gap-5 justify-end items-center">
               <p class="text-gray-800 dark:text-white  text">
-                Welcome, {{ user?.username }}
+                Welcome, {{ user?.firstName }}
               </p>
               <router-link to="/sign-out" class="navItem">
                 <button class="rounded-xl bg-transparant border-2 border-white text-white hover:bg-white pt-2 pb-2 pl-3 pe-3 font-bold hover:text-gray-800">

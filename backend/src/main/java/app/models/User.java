@@ -29,6 +29,7 @@ public class User extends Auditable implements UserDetails {
     @Column(unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String firstName;
 
     private String lastName;

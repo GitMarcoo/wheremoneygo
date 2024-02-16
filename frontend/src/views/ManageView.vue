@@ -24,7 +24,7 @@
         v-if="incomesIsPending"
         class="min-heigth-100"
       />
-      <ExpenseTableComponent
+      <BudgetTableComponent
         v-else-if="incomesHasValues"
         :title="'Incomes'"
         :data="incomes"
@@ -47,11 +47,10 @@
         v-else-if="expenseIsPending"
         class="min-heigth-100"
       />
-      <ExpenseTableComponent
-        v-else-if="expensesHasValues"
+      <BudgetTableComponent
         :title="'Incomes'"
-        :data="expenses"
-        :interval="currentInterval"
+        :data="(expenses as Budget[] | undefined)"
+        :interval="(currentInterval as String)"
         @update="refetch"
       />
     </div>
@@ -59,8 +58,8 @@
 </template>
 <script setup lang="ts">
 import { defineComponent, onBeforeMount, ref, computed, inject, watchEffect } from 'vue';
-import Expense from '@/models/Expense';
-import ExpenseTableComponent from '@/components/ManageComponents/ExpenseTableComponent.vue';
+import Budget from '@/models/Budget';
+import BudgetTableComponent from '@/components/ManageComponents/BudgetTableComponent.vue';
 import RESTAdopterWithFetch from '@/services/RESTAdaptorWithFetch';
 import IntervalDropDown from '@/components/IntervalDropDown.vue';
 import Interval from '@/models/Interval';
@@ -69,20 +68,20 @@ import ErrorComponent from '@/components/ErrorComponent.vue';
 
 defineComponent({
     components: {
-        ExpenseTableComponent
+        BudgetTableComponent
     }
 });
 
-const expenseService: RESTAdopterWithFetch<Expense> | undefined = inject('expenseService')
-if (!expenseService) {
-    throw new Error('No expense service provided');
+const budgetService: RESTAdopterWithFetch<Budget> | undefined = inject('budgetService')
+if (!budgetService) {
+    throw new Error('No budget service provided');
 }
 
-const incomes = ref<Expense[]>([]);
-const expenses = ref<Expense[]>([]);
-const incomeResponse  = expenseService.custom('positive', 'GET', null, null);
+const incomes = ref<Budget[]>([]);
+const expenses = ref<Budget[]>([]);
+const incomeResponse  = budgetService.custom('incomes', 'GET', null, null);
 const loadIncomes = ref(incomeResponse.load)
-const expenseResponse = expenseService.custom('negative', 'GET', null, null);
+const expenseResponse = budgetService.custom('expenses', 'GET', null, null);
 const loadExpenses = ref(expenseResponse.load)
 const currentInterval = ref<Interval>(Interval.MONTHLY);
 const incomesIsPending = ref<boolean>(false)

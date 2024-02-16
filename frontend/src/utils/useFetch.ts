@@ -52,6 +52,10 @@ export function useFetch (url: string, object: any, method = 'GET', params: any 
     try {
       const response = await fetch(newUrl, fetchOptions)
 
+      if(response.status === 404) {
+        return null
+      }
+
       if (!response.ok) {
         throw Error('Could not fetch the data for that resource')
       }

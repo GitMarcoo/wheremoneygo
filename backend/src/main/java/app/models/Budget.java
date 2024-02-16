@@ -28,12 +28,12 @@ public class Budget extends Auditable {
 
     private LocalDateTime end;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
     private boolean isDeleted;
 
     private boolean isRecurring;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }

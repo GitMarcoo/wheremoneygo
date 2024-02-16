@@ -2,22 +2,29 @@ import  Interval from './Interval';
 import { getIntervalName } from './Interval';
 import mock from "@/assets/expensesData.json";
 
-export default class Expense {
+export default class Budget {
     id: number;
     name: string;
     amount: number;
     timeInterval: Interval;
+    start: Date | undefined;
+    end: Date | undefined;
+    recurring: boolean;
 
 
-    constructor(id: number, name: string, amount: number, interval: Interval | string) {
-       this.id = id;
-       this.name = name;
-       this.amount = amount;
-       this.timeInterval = this.setExpenseInterval(interval);
+    constructor(id: number, name: string, amount: number, interval: Interval | string,
+        start?: Date, end?: Date, isRecurring?: boolean) {
+        this.id = id;
+        this.name = name;
+        this.amount = amount;
+        this.timeInterval = this.setExpenseInterval(interval);
+        this.start = start;
+        this.end = end;
+        this.recurring = isRecurring || false;
     }
 
-    static copyConstructor(input: any): Expense {
-        return new Expense(input.id, input.name, input.amount, input.timeInterval);
+    static copyConstructor(input: any): Budget {
+        return new Budget(input.id, input.name, input.amount, input.timeInterval, input.start, input.end, input.recurring);
     }
 
     setExpenseInterval(interval: Interval | string): Interval {
@@ -81,11 +88,14 @@ export default class Expense {
         } 
     }
 
-    equals(other: Expense | undefined | null): boolean {
+    equals(other: Budget | undefined | null): boolean {
         if(other === null || other === undefined) return false;
         return this.name === other.name &&
         this.amount === other.amount &&
-        this.timeInterval === other.timeInterval
+        this.timeInterval === other.timeInterval &&
+        this.start === other.start &&
+        this.end === other.end &&
+        this.recurring === other.recurring;
     }
 
     private dailyToOtherInterval(amount: number, interval: Interval): number {

@@ -20,7 +20,7 @@ public class UserService {
     private final UserMapper userMapper;
 
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
+        return username -> userRepository.findById(Long.parseLong(username))
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
     }
 

@@ -7,18 +7,18 @@
       <input
         type="text"
         class="border-0 bg-transparent font-medium text-gray-900 dark:text-white whitespace-nowrap" 
-        :value="props.expense.getName()"
+        :value="props.budget.getName()"
         :disabled="inPreviewMode"
       >
     </th>
     <td
       class="px-6 font-bold m-auto"
-      :class="{'text-green-600': props.expense.getAmount() > 0, 'text-red-600': props.expense.getAmount() < 0}"
+      :class="{'text-green-600': props.budget.getAmount() > 0, 'text-red-600': props.budget.getAmount() < 0}"
     >
-      {{ '€ ' + expense.getAmountByInterval(props.interval).toFixed(2) }}
+      {{ '€ ' + budget.getAmountByInterval(props.interval).toFixed(2) }}
     </td>
     <!-- <td class="px-6 font-bold">
-        {{ props.expense.getIntervalName() }}
+        {{ props.budget.getIntervalName() }}
     </td> -->
     <td class="flex flex-row flex h-16">
       <EditButton
@@ -26,23 +26,23 @@
       />
     </td>
   </tr>
-  <ExpenseEditPopOver
+  <BudgetEditPopOver
     :show-pop-over="!inPreviewMode"
-    :expense="props.expense"
+    :budget="props.budget"
     @close="exitEditRow"
     @update="passUpdate"
   />
 </template>
 <script setup lang="ts">
 import { defineProps, ref, defineEmits, watch } from 'vue';
-import Expense from '@/models/Expense';
+import Budget from '@/models/Budget';
 import EditButton from '../Buttons/EditButton.vue';
-import ExpenseEditPopOver from './ExpenseEditPopOver.vue';
+import BudgetEditPopOver from './BudgetEditPopOver.vue';
 import Interval from '@/models/Interval';
 
 const props = defineProps({
-    expense: {
-        type: Expense,
+    budget: {
+        type: Budget,
         required: true
     },
     inPreviewMode: {
@@ -51,17 +51,17 @@ const props = defineProps({
         default: true
     },
     interval: {
-        type: Object as () => Interval,
+        type: String as () => Interval,
         required: false
     }
 });
 
-const emtis = defineEmits(['expenseDeleted', 'update'])
+const emtis = defineEmits(['budgetDeleted', 'update'])
 
-const expense = ref(props.expense)
+const budget = ref(props.budget)
 
-watch(() => props.expense, () => {
-    expense.value = props.expense
+watch(() => props.budget, () => {
+    budget.value = props.budget
 })
 
 const inPreviewMode = ref<boolean>(props.inPreviewMode)
@@ -81,4 +81,3 @@ const passUpdate = (): void => {
 
 
 </script>
-

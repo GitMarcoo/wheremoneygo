@@ -1,6 +1,6 @@
 import User from "@/models/User";
 import { Ref, ref } from "vue";
-import JwtDecoder from "@/utils/JwtDecoder";
+import decodeToken from "@/utils/JwtDecoder";
 
 /** Class representing a session service.
  * It manages the session of the user. 
@@ -37,7 +37,7 @@ export default class SessionSbService {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email: email, password: password }),
-            // credentials: 'include',
+            credentials: 'include'
         })
         if (response.ok) {
             return true
@@ -55,14 +55,14 @@ export default class SessionSbService {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email: email, password: password }),
-            // credentials: 'include',
+            credentials: 'include'
         })
         if (response.ok) {
             const user = await response.json();
             const authHeader = response.headers.get('Authorization') as string;
             const token = authHeader.split(' ')[1];
-            const decodedToken = JwtDecoder.decode(token);
-            const newUser = new User(decodedToken.id, decodedToken.firstName, null, null);
+            const decodedToken = decodeToken(token);
+            const newUser = new User(Number(decodedToken.sub), user.firstName, null, null, decodedToken.roles);
             this.saveToken(response.headers.get('Authorization') as string,
             newUser);
             this.user.value = newUser;
