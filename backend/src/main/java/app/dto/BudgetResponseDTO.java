@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -15,7 +17,7 @@ public class BudgetResponseDTO {
     private String name;
     private TimeInterval timeInterval;
     private double amount;
-    private String start;
-    private String end;
+    private LocalDate start;
+    private LocalDate end;
     private boolean isRecurring;
 }

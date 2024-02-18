@@ -38,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/:pageMatch(.*)*',
     name: 'UnknownRouteComponent',
-    component: () => import(/* webpackChunkName: "notfound" */ '../views/HomeView.vue')
+    redirect: '/'
   }
 ]
 

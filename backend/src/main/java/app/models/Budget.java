@@ -3,6 +3,7 @@ package app.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,12 +25,13 @@ public class Budget extends Auditable {
 
     private double amount;
 
-    private LocalDateTime start;
+    private LocalDate start;
 
-    private LocalDateTime end;
+    private LocalDate end;
 
     private boolean isDeleted;
 
+    @Column(name = "is_recurring", columnDefinition = "boolean default false")
     private boolean isRecurring;
 
     @ManyToOne

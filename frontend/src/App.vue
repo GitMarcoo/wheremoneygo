@@ -32,6 +32,7 @@ const fetchInterceptor = new FetchInterceptor(sessionService, router);
 
 provide('budgetService', new RESTAdopterWithFetch<Budget>(CONFIG.BACKEND_URL + '/api/v1/budgets', Budget.copyConstructor))
 provide('userService', new RESTAdopterWithFetch<User>(CONFIG.BACKEND_URL + '/api/v1/users', User.copyConstructor))
+provide('authenticationService', new RESTAdopterWithFetch<User>(CONFIG.BACKEND_URL + '/api/v1', User.copyConstructor))
 provide('sessionService', sessionService)
 provide('fetchInterceptor', fetchInterceptor)
 

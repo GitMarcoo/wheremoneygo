@@ -5,15 +5,17 @@ export default class User {
     email: string | null;
     firstName: string ;
     lastName: string | null;
-    roles: Role[] | Role;
+    roles: Role[] | Role | null;
+    password: string | null;
 
     
-    constructor(id: number, firstName: string, email: string | null, lastName: string | null, roles: Role[] | Role) {
+    constructor(id: number, firstName: string, email: string | null, lastName: string | null, roles: Role[] | Role | null, password: string | null = null) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.roles = roles;
+        this.password = password;
     }
 
     static copyConstructor(input: {id: number, firstName: string, email: string | null,

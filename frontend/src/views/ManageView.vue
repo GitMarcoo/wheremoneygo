@@ -15,21 +15,13 @@
           {{ currentInterval }} Incomes
         </h3>
       </div>
-      <ErrorComponent
-        v-if="incomesError"
-        class="min-heigth-100"
-        :message="incomesError"
-      />
-      <LoadingComponent
-        v-if="incomesIsPending"
-        class="min-heigth-100"
-      />
       <BudgetTableComponent
-        v-else-if="incomesHasValues"
         :title="'Incomes'"
-        :data="incomes"
-        :interval="currentInterval"
+        :data="(incomes as Budget[])"
+        :interval="(currentInterval as Interval)"
         @update="refetch"
+        :isLoading="incomesIsPending"
+        :error="incomesError"
       />
     </div>
     <div class="mt-10">
@@ -38,20 +30,13 @@
           {{ currentInterval }} Expenses
         </h3>
       </div>
-      <ErrorComponent
-        v-if="expenseError"
-        class="min-heigth-100"
-        :message="expenseError"
-      />
-      <LoadingComponent
-        v-else-if="expenseIsPending"
-        class="min-heigth-100"
-      />
       <BudgetTableComponent
         :title="'Incomes'"
-        :data="(expenses as Budget[] | undefined)"
-        :interval="(currentInterval as String)"
+        :data="(expenses as Budget[])"
+        :interval="(currentInterval as Interval)"
         @update="refetch"
+        :isLoading="incomesIsPending"
+        :error="incomesError"
       />
     </div>
   </div>
@@ -63,8 +48,6 @@ import BudgetTableComponent from '@/components/ManageComponents/BudgetTableCompo
 import RESTAdopterWithFetch from '@/services/RESTAdaptorWithFetch';
 import IntervalDropDown from '@/components/IntervalDropDown.vue';
 import Interval from '@/models/Interval';
-import LoadingComponent from '@/components/LoadingComponent.vue';
-import ErrorComponent from '@/components/ErrorComponent.vue';
 
 defineComponent({
     components: {

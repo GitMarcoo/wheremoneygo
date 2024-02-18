@@ -46,7 +46,7 @@ public class BudgetController {
     public ResponseEntity<?> updateBudget(@NonNull @PathVariable Long id,
                                           @NonNull @RequestBody BudgetRequestDTO budget,
                                           @NonNull @AuthenticationPrincipal User user) {
-            return ResponseEntity.status(HttpStatus.OK).body(
+            return ResponseEntity.ok().body(
                     budgetService.updateBudget(id, budget, user));
     }
 

@@ -13,6 +13,7 @@
           <form
             class="space-y-4 md:space-y-6"
             action="#"
+            @submit.prevent
           >
             <div>
               <label
@@ -26,6 +27,36 @@
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="name@company.com"
                 required="true"
+                v-model="email"
+              >
+            </div>
+            <div>
+              <label
+                for="firstName"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >Firstname</label>
+              <input
+                id="firstName"
+                type="text"
+                name="firstName"
+                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Steve"
+                required="true"
+                v-model="firstName"
+              >
+            </div>
+            <div>
+              <label
+                for="lastName"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >Lastname</label>
+              <input
+                id="lastName"
+                type="text"
+                name="lastName"
+                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Smith"
+                v-model="lastName"
               >
             </div>
             <div>
@@ -40,6 +71,7 @@
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required="true"
+                v-model="password"
               >
             </div>
             <div>
@@ -49,11 +81,12 @@
               >Confirm password</label>
               <input
                 id="confirm-password"
-                type="confirm-password"
+                type="password"
                 name="confirm-password"
                 placeholder="••••••••"
                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 required="true"
+                v-model="confirmPassword"
               >
             </div>
             <!-- <div class="flex items-start">
@@ -64,7 +97,9 @@
                             <label for="terms" class="font-light text-gray-500 dark:text-gray-300">I accept the <a class="font-medium text-primary-600 hover:underline dark:text-primary-500" href="#">Terms and Conditions</a></label>
                         </div>
                     </div> -->
-            <button class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+            <span v-show="passwordError" class="mt-1 justify-center flex text-red-600 italic">*Make sure your passwords match</span>
+            <span v-show="signUpError" class="mt-1 justify-center flex text-red-600 italic">{{ signUpError }}</span>
+            <button @click="signUpHandle" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
               Create an account
             </button>
             <p class="text-sm font-light text-gray-500 dark:text-gray-400">
@@ -84,5 +119,50 @@
 </template>
 
 <script setup lang="ts">
+import User from '@/models/User';
+import { ref, inject, watchEffect, computed } from 'vue';
+import RESTAdopterWithFetch from '@/services/RESTAdaptorWithFetch';
+import router from '@/router';
+import { useToast } from 'vue-toast-notification';
+
+let email: string;
+let password: string;
+let confirmPassword: string;
+let firstName: string;
+let lastName: string;
+
+const $toast = useToast()
+
+const passwordError = ref(false);
+const authenticationService: RESTAdopterWithFetch<User> | undefined = inject('authenticationService');
+if(!authenticationService) throw new Error('authenticationService is not provided')
+const signUpError = ref<string>('');
+const signUpIsPending = ref<boolean>(false);
+
+const signUpHandle = () => {
+  if (requiredFieldsOk.value) {
+    passwordError.value = false
+    const user = new User(0, firstName, email, lastName, null, password)
+    const response = authenticationService.custom('signup', 'POST', user, null)
+
+    watchEffect(() => {
+      signUpIsPending.value = response.isPending.value
+      signUpError.value = response.error.value
+    })
+
+    response.load().then(() => {
+      if(!signUpError.value ) {
+        $toast.info('Account created successfully')
+        router.push('/sign-in')
+      }
+    })
+  } else if (password !== confirmPassword) {
+    passwordError.value = true;
+  }
+}
+
+const requiredFieldsOk = computed(() => {
+  return email && password === confirmPassword && password !== undefined && firstName
+})
 
 </script>

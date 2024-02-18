@@ -1,5 +1,5 @@
 <template>
-  <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+  <tr class="odd:bg-white odd:dark:bg-gray-900 border-b dark:border-gray-700">
     <th
       scope="row"
       class="px-6 "
@@ -22,7 +22,7 @@
     </td> -->
     <td class="flex flex-row flex h-16">
       <EditButton
-        @click="editRow"
+        @click="popOver.toggleDialog()"
       />
     </td>
   </tr>
@@ -31,6 +31,7 @@
     :budget="props.budget"
     @close="exitEditRow"
     @update="passUpdate"
+    ref="popOver"
   />
 </template>
 <script setup lang="ts">
@@ -57,6 +58,7 @@ const props = defineProps({
 });
 
 const emtis = defineEmits(['budgetDeleted', 'update'])
+let popOver: any;
 
 const budget = ref(props.budget)
 
