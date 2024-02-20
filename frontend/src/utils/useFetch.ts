@@ -52,11 +52,19 @@ export function useFetch (url: string, object: any, method = 'GET', params: any 
     try {
       const response = await fetch(newUrl, fetchOptions)
 
+      if(response.status === 404) {
+        return null
+      }
+
       if (!response.ok) {
-        throw Error('Could not fetch the data for that resource')
+        throw Error(await response.text())
       }
       if (response.status !== 204) {
-        data.value = isFormData ? await response.text() : await response.json()
+        try{
+          data.value = isFormData ? await response.text() : await response.json()
+        } catch (err) {
+          data.value = null
+        }
       } else {
         data.value = null // or some appropriate handling for no content
       }

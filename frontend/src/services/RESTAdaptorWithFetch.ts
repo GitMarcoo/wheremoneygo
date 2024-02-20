@@ -67,10 +67,11 @@ export default class RESTAdaptorWithFetch<E> {
 // #todo fix any type
   save (entityToSave: any, method = 'POST') {
     const entity = ref(entityToSave)
-    const endpoint: string = this.resourcesUrl + '/' + entity.value.id
+    let endpoint: string = this.resourcesUrl
 
     if(entity.value.id > 0) {
       method = 'PUT'
+      endpoint = this.resourcesUrl + '/' + entity.value.id
     }
 
     const { data, isPending, error, load, abort, isAborted } = useFetch(endpoint, entity.value, method)

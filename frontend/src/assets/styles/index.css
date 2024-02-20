@@ -18,6 +18,10 @@
     max-width: 500px;
 }
 
+.min-heigth-100 {
+    min-height: 100px;
+}
+
 .inputUnderline {
     @apply border-b-2 border-gray-300 focus:outline-none;
     border: none;
@@ -27,3 +31,12 @@
 .ExpensePopOverLabel {
     @apply text-gray-800 font-extrabold text-xl;
 }
+
+.vh-content {
+    height: calc(100vh - 72px);
+}
+
+.popover-input {
+    @apply border-0 inputUnderline font-medium focus:ring-0  dark:bg-gray-800 rounded text-gray-900 dark:text-white whitespace-nowrap p-0 pl-2 ml-2;
+}
+

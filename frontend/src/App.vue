@@ -1,16 +1,22 @@
 <template>
-  <div class="bg-white dark:bg-gray-800 vh-100">
+  <div class="bg-white dark:bg-gray-800">
     <NavBar />
-    <router-view />
+    <router-view  class="vh-content"/>
+    <FooterComponent />
   </div>
 </template>
 
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue';
-import { defineComponent, provide } from 'vue'
+import { defineComponent, provide, shallowReactive } from 'vue'
 import RESTAdopterWithFetch from '@/services/RESTAdaptorWithFetch';
 import CONFIG from '@/app-config';
-import Expense from '@/models/Expense';
+import Budget from '@/models/Budget';
+import User from './models/User';
+import SessionSbService from './services/SessionSbService';
+import { FetchInterceptor } from './services/FetchInterceptor';
+import { useRouter } from 'vue-router';
+import FooterComponent from '@/components/FooterComponent.vue';
 
 defineComponent({
   name: 'App',
@@ -19,7 +25,16 @@ defineComponent({
   },
 })
 
-provide('expenseService', new RESTAdopterWithFetch<Expense>(CONFIG.BACKEND_URL + '/expenses', Expense.copyConstructor))
+const router = useRouter()
+
+const sessionService = shallowReactive(new SessionSbService(CONFIG.BACKEND_URL + '/api/v1', 'Authorization'));
+const fetchInterceptor = new FetchInterceptor(sessionService, router);
+
+provide('budgetService', new RESTAdopterWithFetch<Budget>(CONFIG.BACKEND_URL + '/api/v1/budgets', Budget.copyConstructor))
+provide('userService', new RESTAdopterWithFetch<User>(CONFIG.BACKEND_URL + '/api/v1/users', User.copyConstructor))
+provide('authenticationService', new RESTAdopterWithFetch<User>(CONFIG.BACKEND_URL + '/api/v1', User.copyConstructor))
+provide('sessionService', sessionService)
+provide('fetchInterceptor', fetchInterceptor)
 
 
 </script>
