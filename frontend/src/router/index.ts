@@ -1,11 +1,17 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
+
+function getUserFromBrowserStorage() {
+  return JSON.parse(sessionStorage.getItem('user') as string);
+}
+
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: () => import(/* webpackChunkName: "about" */ '@/components/HomeViewDetermineComponent.vue')
   },
   {
     path: '/about',

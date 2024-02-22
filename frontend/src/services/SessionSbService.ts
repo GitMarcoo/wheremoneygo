@@ -1,5 +1,5 @@
 import User from "@/models/User";
-import { Ref, ref } from "vue";
+import { Ref, ref, watchEffect } from "vue";
 import decodeToken from "@/utils/JwtDecoder";
 
 /** Class representing a session service.
