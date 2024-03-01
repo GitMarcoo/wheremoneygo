@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -21,4 +20,5 @@ public class BudgetRequestDTO {
     private LocalDate start;
     private LocalDate end;
     private boolean isRecurring;
+    private boolean isSavings;
 }

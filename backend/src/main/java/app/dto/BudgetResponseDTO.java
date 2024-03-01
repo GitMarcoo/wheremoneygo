@@ -20,4 +20,5 @@ public class BudgetResponseDTO {
     private LocalDate start;
     private LocalDate end;
     private boolean isRecurring;
+    private boolean isSavings;
 }

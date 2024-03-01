@@ -9,5 +9,6 @@ import org.mapstruct.Mapping;
 public interface BudgetMapper {
 
     @Mapping(target = "isRecurring", source = "recurring")
+    @Mapping(target = "isSavings", source = "savings")
     BudgetResponseDTO budgetToBudgetResponseDTO(Budget budget);
 }

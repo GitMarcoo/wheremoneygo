@@ -6,28 +6,35 @@ export default class Budget {
     id: number;
     name: string;
     amount: number;
-    timeInterval: Interval;
+    timeInterval: Interval | null;
     start: Date | undefined;
     end: Date | undefined;
     recurring: boolean;
+    savings: boolean;
 
 
-    constructor(id: number, name: string, amount: number, interval: Interval | string,
-        start?: Date, end?: Date, isRecurring?: boolean) {
+    constructor(id: number, name: string, amount: number, interval: Interval | string | null,
+        start?: Date, end?: Date, isRecurring?: boolean, savings?: boolean) {
         this.id = id;
         this.name = name;
         this.amount = amount;
-        this.timeInterval = this.setExpenseInterval(interval);
+
+        if(savings === true) {
+            this.timeInterval = null;
+        } else {
+            this.timeInterval = this.setExpenseInterval(interval);
+        }
         this.start = start;
         this.end = end;
         this.recurring = isRecurring || false;
+        this.savings = savings || false;
     }
 
     static copyConstructor(input: any): Budget {
-        return new Budget(input.id, input.name, input.amount, input.timeInterval, input.start, input.end, input.recurring);
+        return new Budget(input.id, input.name, input.amount, input.timeInterval, input.start, input.end, input.recurring, input.savings);
     }
 
-    setExpenseInterval(interval: Interval | string): Interval {
+    setExpenseInterval(interval: Interval | string | null): Interval | null {
         switch(interval) {
             case Interval.DAILY || "DAILY":
                 return Interval.DAILY;
@@ -42,7 +49,7 @@ export default class Budget {
         }
     }
 
-    getMonthlyInterval(): Interval{
+    getMonthlyInterval(): Interval | null{
         return this.timeInterval;
     }
 
@@ -54,7 +61,8 @@ export default class Budget {
         return this.amount;
     }
 
-    getIntervalName(): string {
+    getIntervalName(): string | null {
+        if(this.timeInterval === null) return null;
         return getIntervalName(this.timeInterval);
     }
 
@@ -68,10 +76,14 @@ export default class Budget {
                 return this.amount;
             case Interval.YEARLY:
                 return this.amount / 12;
+            default:
+                    throw new Error("Invalid interval");
+
         }
     }
 
-    getAmountByInterval(interval: Interval | undefined): number {
+    getAmountByInterval(interval: Interval | undefined | null): number {
+        if(interval === null) return this.amount;
         if(interval === undefined) throw new Error("Interval is undefined");
 
         switch(this.timeInterval) {
@@ -95,7 +107,8 @@ export default class Budget {
         this.timeInterval === other.timeInterval &&
         this.start === other.start &&
         this.end === other.end &&
-        this.recurring === other.recurring;
+        this.recurring === other.recurring &&
+        this.savings === other.savings;
     }
 
     private dailyToOtherInterval(amount: number, interval: Interval): number {
