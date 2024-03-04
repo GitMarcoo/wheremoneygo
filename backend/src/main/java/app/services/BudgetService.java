@@ -46,6 +46,10 @@ public class BudgetService {
                 .collect(Collectors.toList());
     }
 
+    public Budget getBudgetById(Long id, User user) {
+        return null;
+    }
+
     @Transactional
     public BudgetResponseDTO createBudget(BudgetRequestDTO budget, User user) {
         Budget newBudget = Budget.builder()
