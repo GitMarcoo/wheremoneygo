@@ -43,7 +43,7 @@
             :class="{'text-green-600': budgetCopy.getAmount() > 0, 'text-red-600': budgetCopy.getAmount() < 0}"
           >
         </div>
-        <div class="relative w-full mb-5">
+        <div class="relative w-full mb-5" v-if="budgetCopy.timeInterval !== null">
           <label
             for="budgetInterval"
               class="text-gray-800 dark:text-white font-bold text-xl mr-2"
@@ -55,11 +55,16 @@
           />
         </div>
         <div class="flex items-center mb-4">
+            <input v-model="budgetCopy.savings" id="savingscheckbox" type="checkbox" 
+            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 dark:bg-gray-700 dark:border-gray-600">
+            <label for="savingscheckbox" class="ml-3 text-gray-800 dark:text-white font-bold text-lg">Savings</label>
+        </div>
+        <div class="flex items-center mb-4" v-if="!budgetCopy.savings">
             <input v-model="budgetCopy.recurring" id="default-checkbox" type="checkbox" 
             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 dark:bg-gray-700 dark:border-gray-600">
             <label for="default-checkbox" class="ml-3 text-gray-800 dark:text-white font-bold text-lg">Recurring</label>
         </div>
-        <div v-if="budgetCopy.recurring" class="flex flex-row justify-between mt-2">
+        <div v-if="budgetCopy.recurring && !budgetCopy.savings" class="flex flex-row justify-between mt-2">
           <div class="flex flex-col">
             <label
             for="budgetName"
@@ -110,11 +115,11 @@
 <script setup lang="ts">
 import { defineProps, ref, defineEmits, inject, computed, watchEffect, defineExpose } from 'vue';
 import Budget from '@/models/Budget';
-import DeleteButtonText from '../Buttons/DeleteButtonText.vue';
-import SaveButton from '../Buttons/SaveButton.vue';
-import IntervalDropDown from '../IntervalDropDown.vue';
+import DeleteButtonText from '@/components/Buttons/DeleteButtonText.vue';
+import SaveButton from '@/components/Buttons/SaveButton.vue';
+import IntervalDropDown from '@/components/IntervalDropDown.vue';
 import RESTAdaptorWithFetch from '@/services/RESTAdaptorWithFetch';
-import CustomTextButton from '../Buttons/CustomTextButton.vue';
+import CustomTextButton from '@/components/Buttons/CustomTextButton.vue';
 import { Dialog } from '@headlessui/vue';
 
 const props = defineProps({
@@ -165,7 +170,6 @@ const saveClicked = async(): Promise<void> => {
 }
 
 const saveBudget = async (): Promise<void> => {
-
     const response = budgetService.save(budgetCopy.value);
 
     watchEffect(() => {

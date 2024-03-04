@@ -1,8 +1,8 @@
 <template>
   <div class="bg-white dark:bg-gray-800">
     <NavBar />
-    <router-view  class="vh-content"/>
-    <FooterComponent />
+    <router-view  class="vh-content pb-5"/>
+    <FooterComponent/>
   </div>
 </template>
 

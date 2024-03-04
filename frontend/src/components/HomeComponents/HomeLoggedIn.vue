@@ -3,10 +3,14 @@
         <div class="justify-center text-zinc-900 dark:text-white text-3xl font-bold mt-14">
             <h1>You are currenlty at € .... </h1>
         </div>
+        <div class="mt-10">
+            <HomeCardComponent class="justify-center m-auto text-green-600" :title="'Total savings'" :content="'€ ' + totalSaving.toFixed(2)"
+            :isLoading="savingsIsPending"/>
+        </div>
         <div class="grid grid-cols-2 justify-center m-auto mt-14"> 
-            <HomeCardComponent class="justify-center m-auto text-green-600" :title="'Monthly Incomes'" :content="'€ ' + totalMonthlyIncomesAmount"
+            <HomeCardComponent class="justify-center m-auto text-green-600" :title="'Monthly Incomes'" :content="'€ ' + totalMonthlyIncomesAmount.toFixed(2)"
             :isLoading="incomesIsPending"/>
-            <HomeCardComponent class="justify-center m-auto  text-red-600" :title="'Monthly Expenses'" :content="'€ ' + totalMonthlyExpensesAmount"
+            <HomeCardComponent class="justify-center m-auto  text-red-600" :title="'Monthly Expenses'" :content="'€ ' + totalMonthlyExpensesAmount.toFixed(2)"
             :isLoading="expenseIsPending"/>
         </div>
     </div>
@@ -28,12 +32,16 @@ if (!budgetService) {
 
 const incomes = ref<Budget[]>([]);
 const expenses = ref<Budget[]>([]);
+const savings = ref<Budget[]>([]);
 const incomeResponse  = budgetService.custom('incomes', 'GET', null, null);
 const expenseResponse = budgetService.custom('expenses', 'GET', null, null);
+const savingsResponse = budgetService.custom('savings', 'GET', null, null);
+const savingsIsPending = ref<boolean>(false)
 const incomesIsPending = ref<boolean>(false)
 const expenseIsPending = ref<boolean>(false)
 const incomesError = ref<string>('')
 const expenseError = ref<string>('')
+const savingsError = ref<string>('')
 
 onBeforeMount(() => {
     watchEffect(() => {
@@ -41,6 +49,8 @@ onBeforeMount(() => {
       incomesError.value = incomeResponse.error.value
       expenseIsPending.value = expenseResponse.isPending.value
       expenseError.value = expenseResponse.error.value
+      savingsIsPending.value = savingsResponse.isPending.value
+      savingsError.value = savingsResponse.error.value
     })
 
 
@@ -52,6 +62,10 @@ onBeforeMount(() => {
     expenseResponse.load().then((data: any) => {
         expenses.value = expenseResponse.entity.value
     });
+
+    savingsResponse.load().then((data: any) => {
+        savings.value = savingsResponse.entity.value
+    });
 })
 
 const totalMonthlyIncomesAmount = computed((): number => {
@@ -60,5 +74,9 @@ const totalMonthlyIncomesAmount = computed((): number => {
 
 const totalMonthlyExpensesAmount = computed((): number => {
     return expenses.value.reduce((total: number, budget: any) => total + Number(budget.getAmountByInterval(Interval.MONTHLY)), 0);
+});
+
+const totalSaving = computed((): number => {
+    return savings.value.reduce((total: number, budget: any) => total + Number(budget.getAmount()), 0);
 });
 </script>

@@ -33,6 +33,8 @@ public class BudgetService {
             budgets = budgetRepository.findByUserAndByAmountGreaterThanOrEqualTo(0, id);
         } else if (type.equals("expenses")) {
             budgets = budgetRepository.findByUserAndByAmountLessThan(0, id);
+        } else if (type.equals("savings")) {
+            budgets = budgetRepository.findByUserAndBySavingsTrue(id);
         } else {
             throw new IllegalArgumentException("Type must be either 'incomes' or 'expenses'");
         }
@@ -55,6 +57,7 @@ public class BudgetService {
         Budget newBudget = Budget.builder()
                 .amount(budget.getAmount())
                 .isRecurring(budget.isRecurring())
+                .isSavings(budget.isSavings())
                 .start(budget.getStart())
                 .end(budget.getEnd())
                 .timeInterval(budget.getTimeInterval())
@@ -76,6 +79,7 @@ public class BudgetService {
         existingBudget.setEnd(budget.getEnd());
         existingBudget.setTimeInterval(budget.getTimeInterval());
         existingBudget.setName(budget.getName());
+        existingBudget.setSavings(budget.isSavings());
 
         return budgetMapper.budgetToBudgetResponseDTO(budgetRepository.save(existingBudget));
     }

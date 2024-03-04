@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import { defineProps, ref, defineEmits, watch } from 'vue';
 import Budget from '@/models/Budget';
-import EditButton from '../Buttons/EditButton.vue';
+import EditButton from '@/components/Buttons/EditButton.vue';
 import BudgetEditPopOver from './BudgetEditPopOver.vue';
 import Interval from '@/models/Interval';
 
@@ -52,7 +52,7 @@ const props = defineProps({
         default: true
     },
     interval: {
-        type: String as () => Interval,
+        type: String as () => Interval | null,
         required: false
     }
 });

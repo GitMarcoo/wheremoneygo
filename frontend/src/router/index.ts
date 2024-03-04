@@ -2,11 +2,6 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
 
-function getUserFromBrowserStorage() {
-  return JSON.parse(sessionStorage.getItem('user') as string);
-}
-
-
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -24,7 +19,24 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/manage',
     name: 'manage',
-    component: () => import(/* webpackChunkName: "manage" */ '../views/ManageView.vue')
+    component: () => import(/* webpackChunkName: "manage" */ '../views/ManageView.vue'),
+    children: [
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        redirect: '/manage'
+      },
+      {
+        path: 'recurring',
+        name: 'recurring',
+        component: () => import(/* webpackChunkName: "recurring" */ '../views/Manage/RecurringView.vue')
+      },
+      {
+        path: 'savings',
+        name: 'savings',
+        component: () => import(/* webpackChunkName: "savings" */ '../views/Manage/SavingsView.vue')
+      }
+    ]
   },
   {
     path: '/sign-in',

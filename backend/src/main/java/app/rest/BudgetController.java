@@ -33,6 +33,13 @@ public class BudgetController {
                     "expenses", user.getId()));
     }
 
+    @GetMapping("/savings")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> getBudgetSavings(@NonNull @AuthenticationPrincipal User user) {
+            return ResponseEntity.ok(budgetService.getBudgetByTypeAndUserId(
+                    "savings", user.getId()));
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> createBudget(@NonNull @RequestBody BudgetRequestDTO budget,

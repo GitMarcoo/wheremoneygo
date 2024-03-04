@@ -34,6 +34,9 @@ public class Budget extends Auditable {
     @Column(name = "is_recurring", columnDefinition = "boolean default false")
     private boolean isRecurring;
 
+    @Column(name = "is_savings", columnDefinition = "boolean default false")
+    private boolean isSavings;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

@@ -10,9 +10,12 @@ import java.util.List;
 
 @Repository("expenseRepositoryJPA")
 public interface BudgetRepository extends JpaRepository<Budget, Long> {
-    @Query("SELECT e FROM Budget e WHERE e.amount >= :amount AND e.user.id = :userId")
+    @Query("SELECT e FROM Budget e WHERE e.amount >= :amount AND e.user.id = :userId AND e.isSavings = false")
     List<Budget> findByUserAndByAmountGreaterThanOrEqualTo(@Param("amount") double amount , @Param("userId") long userId);
 
-    @Query("SELECT e FROM Budget e WHERE e.amount < :amount AND e.user.id = :userId")
+    @Query("SELECT e FROM Budget e WHERE e.amount < :amount AND e.user.id = :userId AND e.isSavings = false")
     List<Budget> findByUserAndByAmountLessThan(@Param("amount") double i, @Param("userId") long userId);
+
+    @Query("SELECT e FROM Budget e WHERE e.isSavings = true AND e.user.id = :userId")
+    List<Budget> findByUserAndBySavingsTrue(@Param("userId") Long id);
 }

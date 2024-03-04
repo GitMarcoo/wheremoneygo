@@ -14,7 +14,7 @@
               scope="col"
               class="px-6 py-3 text-sm"
             >
-              Amount <span :class="{'text-green-600': totalAmount > 0, 'text-red-600': totalAmount < 0}"> € {{ totalAmount }} </span>
+              Amount <span :class="{'text-green-600': totalAmount > 0, 'text-red-600': totalAmount < 0}"> € {{ totalAmount.toFixed(2) }} </span>
             </th>
             <th scope="col" />
           </tr>
@@ -36,7 +36,7 @@
             v-for="(value, key) in budgets"
             :key="key"
             :budget="(value as Budget)"
-            :interval="(props.interval as Interval)"
+            :interval="(props.interval)"
             @budgetDeleted="deleteBudget"
             @update="updateBudget"
           />
@@ -73,7 +73,8 @@ const props = defineProps({
     },
     interval: {
         type: String as () => Interval,
-        required: true
+        required: false,
+        default: null
     },
     isLoading: {
         type: Boolean,
@@ -84,6 +85,11 @@ const props = defineProps({
         type: String,
         required: false,
         default: ''
+    },
+    isSavings: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 });
 
@@ -100,7 +106,11 @@ watch(() => props.data, () => {
 });
 
 const addBudget = () => {
-    budgets.value.push(new Budget(0, 'new', 0, 'MONTHLY'));
+  if(props.isSavings) {
+    budgets.value.push(new Budget(0, 'new', 0, null, undefined, undefined, false, true));
+    return;
+  }
+    budgets.value.push(new Budget(0, 'new', 0, 'MONTHLY', undefined, undefined, true));
 }
 
 const deleteBudget = (budgetToDelete: Budget): void => {
